@@ -27,11 +27,6 @@ def getNumber():
     print(texte)
     # Get the current date
     date = datetime.datetime.now().strftime("%d/%m")
-    # Open the file in read mode to check for existing date and content
-    with open('data.txt', 'r') as file:
-        # Check if the current date and content are already in the file
-        if any(line.startswith(date + " " + texte) for line in file):
-            return texte
     # Open the file in read mode to check for existing date
     with open('data.txt', 'r') as file:
         # Check if the current date is already in the file
@@ -53,6 +48,20 @@ def getNumber():
             with open('data.txt', 'a') as file:
                 # Append the text and date to the file on a new line
                 file.write(texte + " " + date + "\n")
+    with open("data.txt", "r") as f:
+        lines = f.readlines()
+
+    unique_lines = []
+    for line in lines:
+        if line not in unique_lines:
+            unique_lines.append(line)
+
+    with open("data_graph.txt", "w") as f:
+        for line in lines:
+            if line in unique_lines:
+                f.write(line)
+                unique_lines.remove(line)
+
     return texte
 
 # define a function to send the PNG file
@@ -77,7 +86,7 @@ async def on_message(message):
         async with message.channel.typing():
             getNumber()
             # Open the data file and read the data
-            with open('data.txt', 'r') as file:
+            with open('data_graph.txt', 'r') as file:
                 for line in file:
                     # Split the line into the number and date
                     parts = line.split()
